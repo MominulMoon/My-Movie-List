@@ -1,10 +1,22 @@
 export const WatchedSummary = ({ watched }) => {
   const average = (arr) =>
     arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
+  const total = (arr) =>
+    arr.reduce((acc, cur) => (Number.isInteger(cur) ? acc + cur : acc), 0);
 
-  const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
-  const avgUserRating = average(watched.map((movie) => movie.userRating));
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
+  function roundTo(num, precision) {
+    const factor = Math.pow(10, precision);
+    return Math.round(num * factor) / factor;
+  }
+  const avgImdbRating = roundTo(
+    average(watched.map((movie) => movie.imdbRating)),
+    2,
+  );
+  const avgUserRating = roundTo(
+    average(watched.map((movie) => movie.userRating)),
+    2,
+  );
+  const avgRuntime = roundTo(total(watched.map((movie) => movie.runtime)), 2);
   return (
     <div className="summary">
       <h2>Movies you watched</h2>

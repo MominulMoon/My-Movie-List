@@ -45,7 +45,7 @@ export const MovieDetails = ({
     [selectedId],
   );
 
-  function handleAdd() {
+  async function handleAdd() {
     const newWatchedMovie = {
       imdbID: selectedId,
       title,
@@ -55,7 +55,7 @@ export const MovieDetails = ({
       runtime: Number(runtime.split(" ").at(0)),
       userRating,
     };
-    onAddWatched(newWatchedMovie);
+    await onAddWatched(newWatchedMovie);
     onCloseMovie();
   }
 
@@ -110,7 +110,7 @@ export const MovieDetails = ({
             </p>
             <p>Starring by {actors}</p>
             <p>Directed by {director}</p>
-          </section>{" "}
+          </section>
         </>
       )}
     </div>

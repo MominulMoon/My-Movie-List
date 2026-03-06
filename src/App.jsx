@@ -21,6 +21,26 @@ export default function App() {
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
+  useEffect(function () {
+    let ignore = false;
+
+    async function loadWatched() {
+      try {
+        const res = await fetch("/api/watched");
+        if (!res.ok) throw new Error("Failed to load watched movies");
+        const data = await res.json();
+        if (!ignore) setWatched(Array.isArray(data) ? data : []);
+      } catch {
+        // If the backend isn't running. make it empty
+      }
+    }
+
+    loadWatched();
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   function handleSelectedMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
   }
@@ -29,11 +49,30 @@ export default function App() {
     setSelectedId(null);
   }
 
-  function handleAddWatched(movie) {
-    setWatched((watched) => [...watched, movie]);
+  async function handleAddWatched(movie) {
+    try {
+      const res = await fetch("/api/watched", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(movie),
+      });
+      if (!res.ok) throw new Error("Failed to save watched movie");
+      const data = await res.json();
+      setWatched(Array.isArray(data) ? data : []);
+    } catch {
+      setWatched((watched) => [...watched, movie]);
+    }
   }
-  function handleDeleteWatchedMovie(id) {
+
+  async function handleDeleteWatchedMovie(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
+    try {
+      await fetch(`/api/watched/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+      });
+    } catch {
+      // no-op (backend offline)
+    }
   }
   useEffect(
     function () {

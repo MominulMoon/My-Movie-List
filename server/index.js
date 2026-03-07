@@ -10,8 +10,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
-const DATA_DIR = path.join(__dirname, "data");
-const CSV_PATH = path.join(DATA_DIR, "watched.csv");
+const DATA_DIR = path.resolve(__dirname, "data");
+const CSV_PATH = path.resolve(DATA_DIR, "watched.csv");
 
 const CSV_COLUMNS = [
   "imdbID",
@@ -40,6 +40,7 @@ async function readWatched() {
     columns: true,
     skip_empty_lines: true,
     trim: true,
+    relax_column_count: true,
   });
 
   return records.map((r) => ({
@@ -55,11 +56,22 @@ async function readWatched() {
 
 async function writeWatched(list) {
   await ensureCsvFile();
-  const csv = stringify(list, {
+  const rows = list.map((m) => ({
+    imdbID: String(m.imdbID ?? ""),
+    title: String(m.title ?? ""),
+    year: String(m.year ?? ""),
+    poster: String(m.poster ?? ""),
+    imdbRating: Number(m.imdbRating ?? 0),
+    runtime: Number(m.runtime ?? 0),
+    userRating: Number(m.userRating ?? 0),
+  }));
+  const csv = stringify(rows, {
     header: true,
     columns: CSV_COLUMNS,
   });
   await fs.writeFile(CSV_PATH, csv, "utf8");
+  // eslint-disable-next-line no-console
+  console.log(`Wrote ${rows.length} movie(s) to CSV`);
 }
 
 function normalizeMovie(input) {
@@ -77,30 +89,48 @@ function normalizeMovie(input) {
   return movie;
 }
 
-const app = express();
+let app = express();
 app.use(cors());
 app.use(express.json({ limit: "256kb" }));
+
+app.use((req, _res, next) => {
+  // eslint-disable-next-line no-console
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true, csvPath: CSV_PATH });
+});
 
 app.get("/api/watched", async (_req, res) => {
   try {
     const list = await readWatched();
     res.json(list);
   } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("GET /api/watched error:", err);
     res.status(500).json({ error: String(err?.message ?? err) });
   }
 });
 
-// Add or replace by imdbID
 app.post("/api/watched", async (req, res) => {
   try {
+    if (!req.body || typeof req.body !== "object") {
+      return res.status(400).json({ error: "Invalid JSON body" });
+    }
     const movie = normalizeMovie(req.body);
     if (!movie) return res.status(400).json({ error: "Missing imdbID" });
 
     const list = await readWatched();
     const next = [movie, ...list.filter((m) => m.imdbID !== movie.imdbID)];
     await writeWatched(next);
+    // eslint-disable-next-line no-console
+    console.log(`Wrote ${next.length} movie(s) to CSV`);
     res.json(next);
   } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("POST /api/watched error:", err);
     res.status(500).json({ error: String(err?.message ?? err) });
   }
 });
@@ -111,8 +141,12 @@ app.delete("/api/watched/:imdbID", async (req, res) => {
     const list = await readWatched();
     const next = list.filter((m) => m.imdbID !== imdbID);
     await writeWatched(next);
+    // eslint-disable-next-line no-console
+    console.log(`Deleted ${imdbID}, ${next.length} movie(s) in CSV`);
     res.status(204).end();
   } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("DELETE /api/watched error:", err);
     res.status(500).json({ error: String(err?.message ?? err) });
   }
 });
@@ -120,5 +154,6 @@ app.delete("/api/watched/:imdbID", async (req, res) => {
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`CSV watched API running on http://localhost:${PORT}`);
+  // eslint-disable-next-line no-console
+  console.log(`CSV file: ${CSV_PATH}`);
 });
-

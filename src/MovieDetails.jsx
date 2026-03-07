@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import StarRating from "./StarRating";
 import { Loader } from "./Loader";
+import { func } from "prop-types";
 
 export const MovieDetails = ({
   selectedId,
@@ -59,6 +60,18 @@ export const MovieDetails = ({
     onCloseMovie();
   }
 
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie | ${title} `;
+
+      //clean up function
+      return function () {
+        document.title = "My Movie List";
+      };
+    },
+    [title],
+  );
   return (
     <div className="details">
       {isLoading ? (

@@ -70,10 +70,9 @@ export default function App() {
       await fetch(`/api/watched/${encodeURIComponent(id)}`, {
         method: "DELETE",
       });
-    } catch {
-      // no-op (backend offline)
-    }
+    } catch {}
   }
+
   useEffect(
     function () {
       const controller = new AbortController();
@@ -98,8 +97,8 @@ export default function App() {
           setMovies(data.Search);
           setError("");
         } catch (err) {
-          console.error(err.message);
-          if (err.name !== "AbortError") setError(err.message);
+          if (err.name !== "AbortError") console.log(err.message);
+          setError(err.message);
         } finally {
           setIsLoading(false);
           setError("");
@@ -110,6 +109,7 @@ export default function App() {
         setError("");
         return;
       }
+      handleCloseMovie();
       fetchMovies();
 
       return function () {

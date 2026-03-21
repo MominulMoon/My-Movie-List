@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { Loader } from "./Loader";
-import { func } from "prop-types";
 
 export const MovieDetails = ({
   selectedId,
@@ -30,6 +29,14 @@ export const MovieDetails = ({
   const watchedUserRating = watched.find(
     (movie) => movie.imdbID === selectedId,
   )?.userRating;
+
+  const countRef = useRef(0);
+  useEffectEvent(
+    function () {
+      if (userRating) countRef.current++;
+    },
+    [userRating],
+  );
 
   useEffect(
     function () {
@@ -72,6 +79,7 @@ export const MovieDetails = ({
       imdbRating: Number(imdbRating),
       runtime: Number(runtime.split(" ").at(0)),
       userRating,
+      countRefDecision: countRef.current,
     };
     await onAddWatched(newWatchedMovie);
     onCloseMovie();

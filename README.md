@@ -1,18 +1,133 @@
-# React + Vite
+# My Movie List
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight React movie tracker app where users can search movies, rate watched movies, and keep watched history saved in a CSV-backed backend.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Introduction
 
-## React Compiler
+**My Movie List** is a simple and practical movie app built with React.  
+It uses the OMDb API for search/details and a small Node.js + Express backend for storing watched movie data in a `.csv` file.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+This project is designed to be:
 
-Note: This will impact Vite dev & build performances.
+- Easy to run
+- Easy to understand
+- Lightweight for local development and learning
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Project Structure
+
+```txt
+My-Movie-List/
+├─ src/                    # React frontend
+│  ├─ App.jsx
+│  ├─ MovieDetails.jsx
+│  ├─ MovieList.jsx
+│  ├─ WatchedMovieList.jsx
+│  └─ ...other UI components
+├─ server/                 # Node + Express backend
+│  ├─ index.js             # API endpoints for watched movies
+│  └─ data/
+│     └─ watched.csv       # Persistent watched movie storage
+├─ vite.config.js          # Vite config + API proxy
+├─ package.json            # Scripts and dependencies
+└─ README.md
+```
+
+---
+
+## User Guide
+
+### 1) Install dependencies
+
+```bash
+npm i
+```
+
+### 2) Run full application (frontend + backend)
+
+```bash
+npm run dev:full
+```
+
+This runs:
+
+- React frontend (Vite)
+- Express backend (CSV API)
+
+### 3) Other useful commands
+
+```bash
+# Run only frontend
+npm run dev
+
+# Run only backend
+npm run dev:server
+
+# Build production frontend
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run linter
+npm run lint
+```
+
+---
+
+## Product Features
+
+- Search movies by title from OMDb API
+- View movie details (rating, runtime, plot, cast, etc.)
+- Give personal star rating before adding to watched list
+- Save watched movies with rating data
+- Delete watched movies from UI and backend storage
+- Persistent storage in `server/data/watched.csv`
+- Clean, simple, and lightweight architecture
+
+---
+
+## Data Persistence Note
+
+At first, watched movie data was only in frontend state, so data disappeared after reload/close.  
+To solve this, a backend API was added to read/write watched movies into a CSV file.
+
+### Difficulty faced
+
+One of the main development challenges was adding reliable data updates to backend `.csv` storage, especially making sure:
+
+- New watched movies are written correctly
+- Deleted movies are removed from CSV
+- Frontend and backend stay in sync during development
+
+---
+
+## Why This Project Is Lightweight
+
+- Minimal dependencies
+- No complex database setup
+- CSV-based local persistence
+- Fast startup with Vite + small Express server
+- Suitable for learning React state + backend integration
+
+---
+
+## Developer Bio
+
+**MD Moon Babu**  
+**RUET CSE**
+
+Passionate about building practical and user-friendly software while continuously improving full-stack development skills.
+
+---
+
+## Future Improvements (Optional Ideas)
+
+- Add edit/update rating for already watched movies
+- Add sorting/filtering (by rating, runtime, year)
+- Add export/import for watched data
+- Add deployment-ready database option (SQLite or MongoDB)
+- Add tests for API and UI flows

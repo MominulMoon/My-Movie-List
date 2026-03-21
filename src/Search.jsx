@@ -1,3 +1,7 @@
+/**
+ * Search input with Enter-key focus shortcut.
+ * Enter focuses the input and clears query when not already focused.
+ */
 import { useEffect, useRef } from "react";
 export const Search = ({ query, setQuery }) => {
   const inputEl = useRef(null);

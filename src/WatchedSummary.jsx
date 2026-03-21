@@ -1,9 +1,11 @@
+/** Summary stats: count, avg IMDb rating, avg user rating, total runtime */
 export const WatchedSummary = ({ watched }) => {
   const average = (arr) =>
     arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
   const total = (arr) =>
     arr.reduce((acc, cur) => (Number.isInteger(cur) ? acc + cur : acc), 0);
 
+  /** Round number to given decimal places */
   function roundTo(num, precision) {
     const factor = Math.pow(10, precision);
     return Math.round(num * factor) / factor;

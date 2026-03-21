@@ -1,3 +1,7 @@
+/**
+ * Interactive star rating component.
+ * Supports hover preview, custom max rating, color, size, and optional messages.
+ */
 import { useState } from "react";
 import PropTypes from "prop-types";
 const containerStyle = {
@@ -37,6 +41,7 @@ export default function StarRating({
     fontSize: `${size / 1.5}px`,
   };
 
+  /** Apply rating and notify parent */
   function handleRating(rating) {
     setRating(rating);
     onSetRating(rating);
@@ -65,6 +70,7 @@ export default function StarRating({
   );
 }
 
+/** Single star icon: full or outline, click/hover handlers */
 function Star({ onRate, full, onHoverIn, onHoverOut, color, size }) {
   const starStyle = {
     width: `${size}px`,

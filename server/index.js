@@ -1,3 +1,8 @@
+/**
+ * CSV-backed API for watched movies.
+ * GET/POST/DELETE /api/watched - read, add, remove movies from watched.csv.
+ * Run with: npm run dev:server
+ */
 import express from "express";
 import cors from "cors";
 import fs from "node:fs/promises";
@@ -13,6 +18,7 @@ const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
 const DATA_DIR = path.resolve(__dirname, "data");
 const CSV_PATH = path.resolve(DATA_DIR, "watched.csv");
 
+/** CSV column headers for watched movie records */
 const CSV_COLUMNS = [
   "imdbID",
   "title",
@@ -23,6 +29,7 @@ const CSV_COLUMNS = [
   "userRating",
 ];
 
+/** Ensure data dir and watched.csv exist; create if missing */
 async function ensureCsvFile() {
   await fs.mkdir(DATA_DIR, { recursive: true });
   try {
@@ -33,6 +40,7 @@ async function ensureCsvFile() {
   }
 }
 
+/** Read all watched movies from CSV */
 async function readWatched() {
   await ensureCsvFile();
   const content = await fs.readFile(CSV_PATH, "utf8");
@@ -54,6 +62,7 @@ async function readWatched() {
   }));
 }
 
+/** Write watched movie list to CSV */
 async function writeWatched(list) {
   await ensureCsvFile();
   const rows = list.map((m) => ({
@@ -74,6 +83,7 @@ async function writeWatched(list) {
   console.log(`Wrote ${rows.length} movie(s) to CSV`);
 }
 
+/** Normalize and validate movie object from request body */
 function normalizeMovie(input) {
   const movie = {
     imdbID: String(input?.imdbID ?? "").trim(),
@@ -99,10 +109,12 @@ app.use((req, _res, next) => {
   next();
 });
 
+/** Health check: returns ok and CSV path */
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, csvPath: CSV_PATH });
 });
 
+/** GET /api/watched - return all watched movies */
 app.get("/api/watched", async (_req, res) => {
   try {
     const list = await readWatched();
@@ -114,6 +126,7 @@ app.get("/api/watched", async (_req, res) => {
   }
 });
 
+/** POST /api/watched - add or update movie by imdbID */
 app.post("/api/watched", async (req, res) => {
   try {
     if (!req.body || typeof req.body !== "object") {
@@ -135,6 +148,7 @@ app.post("/api/watched", async (req, res) => {
   }
 });
 
+/** DELETE /api/watched/:imdbID - remove movie from watched list */
 app.delete("/api/watched/:imdbID", async (req, res) => {
   try {
     const imdbID = String(req.params.imdbID ?? "").trim();

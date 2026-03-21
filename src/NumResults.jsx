@@ -1,3 +1,4 @@
+/** Shows total number of search results */
 export const NumResults = ({ movies }) => {
   return (
     <p className="num-results">

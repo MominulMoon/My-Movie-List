@@ -1,3 +1,4 @@
+/** Top navigation bar with logo and slot for Search/NumResults */
 export const NavBar = ({ children }) => {
   return (
     <nav className="nav-bar">
@@ -6,6 +7,7 @@ export const NavBar = ({ children }) => {
     </nav>
   );
 };
+/** App logo and title */
 function Logo() {
   return (
     <div className="logo">

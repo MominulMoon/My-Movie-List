@@ -1,3 +1,7 @@
+/**
+ * MovieDetails: full details view for a selected movie.
+ * Fetches from OMDb API, shows star rating, and adds to watched list with user rating.
+ */
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import StarRating from "./StarRating";
 import { Loader } from "./Loader";
@@ -38,6 +42,7 @@ export const MovieDetails = ({
     [userRating],
   );
 
+  // Close on Escape key
   useEffect(
     function () {
       function callback(e) {
@@ -54,6 +59,7 @@ export const MovieDetails = ({
     [onCloseMovie],
   );
 
+  // Fetch movie details from OMDb when selectedId changes
   useEffect(
     function () {
       async function getMovieDetails() {
@@ -70,6 +76,7 @@ export const MovieDetails = ({
     [selectedId],
   );
 
+  /** Add movie to watched list with user rating and close details */
   async function handleAdd() {
     const newWatchedMovie = {
       imdbID: selectedId,
@@ -85,12 +92,13 @@ export const MovieDetails = ({
     onCloseMovie();
   }
 
+  // Update page title when movie loads; reset on unmount
   useEffect(
     function () {
       if (!title) return;
       document.title = `Movie | ${title} `;
 
-      //clean up function
+      // Cleanup: restore default title
       return function () {
         document.title = "My Movie List";
       };

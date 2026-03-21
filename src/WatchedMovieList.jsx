@@ -1,3 +1,4 @@
+/** Renders list of watched movies with delete button for each */
 export const WatchedMovieList = ({ watched, onDeleteWatched }) => {
   return (
     <ul className="list">
@@ -12,6 +13,7 @@ export const WatchedMovieList = ({ watched, onDeleteWatched }) => {
   );
 };
 
+/** Single watched movie item with poster, ratings, runtime, and delete btn */
 function WatchedMovie({ movie, onDeleteWatched }) {
   return (
     <li>

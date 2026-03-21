@@ -1,3 +1,4 @@
+/** Collapsible box: toggle open/closed with button, shows children when open */
 import { Children, useState } from "react";
 
 export const Box = ({ children }) => {

@@ -1,3 +1,8 @@
+/**
+ * Main App component.
+ * Manages global state: movies (search results), watched list, loading, errors.
+ * Fetches movies from OMDb API and persists watched list via backend CSV API.
+ */
 import { useEffect, useState } from "react";
 import { NavBar } from "./NavBar";
 import { Search } from "./Search";
@@ -11,6 +16,7 @@ import { Loader } from "./Loader";
 import { ErrorMessage } from "./ErrorMessage";
 import { MovieDetails } from "./MovieDetails";
 
+/** OMDb API key for movie search/details */
 const KEY = "be172064";
 
 export default function App() {
@@ -21,6 +27,7 @@ export default function App() {
   const [error, setError] = useState("");
   const [selectedId, setSelectedId] = useState(null);
 
+  // Load watched movies from CSV backend on mount
   useEffect(function () {
     let ignore = false;
 
@@ -31,7 +38,7 @@ export default function App() {
         const data = await res.json();
         if (!ignore) setWatched(Array.isArray(data) ? data : []);
       } catch {
-        // If the backend isn't running. make it empty
+        // Backend offline: keep watched empty
       }
     }
 
@@ -41,6 +48,7 @@ export default function App() {
     };
   }, []);
 
+  /** Toggle selected movie (show details or close) */
   function handleSelectedMovie(id) {
     setSelectedId((selectedId) => (id === selectedId ? null : id));
   }
@@ -49,6 +57,7 @@ export default function App() {
     setSelectedId(null);
   }
 
+  /** Add movie to watched list and save to CSV backend */
   async function handleAddWatched(movie) {
     try {
       const res = await fetch("/api/watched", {
@@ -64,6 +73,7 @@ export default function App() {
     }
   }
 
+  /** Remove movie from watched list and update CSV backend */
   async function handleDeleteWatchedMovie(id) {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id));
     try {
@@ -73,6 +83,7 @@ export default function App() {
     } catch {}
   }
 
+  // Fetch movies from OMDb when search query changes
   useEffect(
     function () {
       const controller = new AbortController();
@@ -104,6 +115,7 @@ export default function App() {
           setError("");
         }
       }
+      // Require at least 3 chars before searching
       if (query.length < 3) {
         setMovies([]);
         setError("");
@@ -158,6 +170,7 @@ export default function App() {
   );
 }
 
+/** Layout wrapper for main content area */
 function Main({ children }) {
   return <main className="main">{children}</main>;
 }

@@ -1,3 +1,4 @@
+/** Renders search results as a list of movie cards */
 export const MovieList = ({ movies, onSelectMovie }) => {
   return (
     <ul className="list list-movies">
@@ -7,6 +8,7 @@ export const MovieList = ({ movies, onSelectMovie }) => {
     </ul>
   );
 };
+/** Single movie card in search results */
 function Movie({ movie, onSelectMovie }) {
   return (
     <li onClick={() => onSelectMovie(movie.imdbID)}>

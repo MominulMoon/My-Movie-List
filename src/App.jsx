@@ -4,17 +4,17 @@
  * Fetches movies from OMDb API and persists watched list via backend CSV API.
  */
 import { useEffect, useState } from "react";
-import { NavBar } from "./NavBar";
-import { Search } from "./Search";
-import { NumResults } from "./NumResults";
+import { NavBar } from "./Components/NavBar";
+import { Search } from "./Components/Search";
+import { NumResults } from "./Components/NumResults";
 
-import { Box } from "./Box";
-import { MovieList } from "./MovieList";
-import { WatchedSummary } from "./WatchedSummary";
-import { WatchedMovieList } from "./WatchedMovieList";
-import { Loader } from "./Loader";
-import { ErrorMessage } from "./ErrorMessage";
-import { MovieDetails } from "./MovieDetails";
+import { Box } from "./Components/Box";
+import { MovieList } from "./Components/MovieList";
+import { WatchedSummary } from "./Components/WatchedSummary";
+import { WatchedMovieList } from "./Components/WatchedMovieList";
+import { Loader } from "./Components/Loader";
+import { ErrorMessage } from "./Components/ErrorMessage";
+import { MovieDetails } from "./Components/MovieDetails";
 
 /** OMDb API key for movie search/details */
 const KEY = "be172064";
